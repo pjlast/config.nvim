@@ -32,6 +32,10 @@ lsp.set_preferences({
     }
 })
 
+local function prettier()
+   vim.cmd("silent !prettier --stdin-filepath % --write %")
+end
+
 lsp.on_attach(function(client, bufnr)
 	local opts = {buffer = bufnr, remap = false}
 
@@ -45,6 +49,12 @@ lsp.on_attach(function(client, bufnr)
 	vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
 	vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
 	vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+
+    if client.name == "tsserver" then
+        if vim.fn.executable('prettier') == 1 then
+            vim.keymap.set("n", "<leader>vf", prettier, opts)
+        end
+    end
 end)
 
 require('lspconfig')['tsserver'].setup{
